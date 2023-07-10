@@ -13,10 +13,12 @@ import {
   decQuantity,
   reset,
 } from '@/app/redux/cartSlice';
+import { useSession } from 'next-auth/react';
 
 export default function Cart() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const session = useSession();
 
   const [error, setError] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -29,7 +31,7 @@ export default function Cart() {
     setError(false);
     const order = {
       items: cartItems.map((item) => {
-        return { product: item.product._id, quantity: item.quantity };
+        return { product: item.product.name, price: item.product.price, quantity: item.quantity };
       }),
       name: event.target.name.value,
       email: event.target.email.value,
@@ -107,6 +109,7 @@ export default function Cart() {
               type="text"
               name="name"
               placeholder="Name"
+              defaultValue={session?.data? session.data.user.name: ''}
               required
             />
           </label>
@@ -117,6 +120,7 @@ export default function Cart() {
               type="email"
               name="email"
               placeholder="email@example.com"
+              defaultValue={session?.data? session.data.user.email: ''}
               required
             />
           </label>
